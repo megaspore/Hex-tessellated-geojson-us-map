@@ -16,15 +16,15 @@ def index(request):
 
 def geofile(request):
     ## input variable, can be a local path or eventually populated by the backend
-    input = "/home/chris/visual/bengie/weather/map/data/api_endpoint_OWM_temperature_20221010.json"
+    input = "/home/chris/visual/bengie/weather/map/data/newapi.json"
     ## Output variable, what populates the map currently
     output = "/home/chris/visual/bengie/weather/map/geodata/test.geojson"
     ## Hex variable is the output ran through pyEAC tesillation, currently not working dynamicly
-    hex = "/home/chris/visual/bengie/weather/map/pyeac/hexmaps/testhex.geojson"
+    hex = "/home/chris/visual/bengie/weather/map/geodata/testhex.geojson"
     
     ## if output already exists populate with output
     if os.path.exists(output) == True: 
-        newgeojson=json.load(open(output, "r", encoding="utf-8")) 
+        newgeojson=json.load(open(hex, "r", encoding="utf-8")) 
          ## Pass variable geojson to url hoasting     
         return JsonResponse(newgeojson,safe=False)
 
@@ -38,17 +38,18 @@ def geofile(request):
                 {
                         
                         "type":"Feature",
+                        "properties":d,
                         "geometry": {
                         "type":"Polygon",
                         ## Creat polygon from point
-                        "coordinates":[[[d["lon"]+1, d["lat"]], [d["lon"], d["lat"]+1], [d["lon"]-1, d["lat"]], [d["lon"], d["lat"]-1]]],
+                        "coordinates":[[[transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"]+2, d["lat"]),transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"], d["lat"]+2), transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"]-2, d["lat"]), transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"),d["lon"], d["lat"]-2)]]],
                     },
-                        "properties":d,
+                        
                 ## Populate with inputfile data
                 } for d in input_file 
             ]  
         }
-
+        
         ## Create new geojson file 
         newgeojson=open(output, "w", encoding="utf-8")
         ## Load file with geo data 
