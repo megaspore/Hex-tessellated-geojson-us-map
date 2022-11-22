@@ -47,11 +47,18 @@
                    
                 
                 });
+
+                map.addSource('hexes', {
+                    'type': 'geojson',
+                    'data': "http://127.0.0.1:8000/weathermap/geofile"
+                   
+                
+                });
                 // Add a layer showing the places.
                 map.addLayer({
-                    'id': 'places',
+                    'id': 'hexes',
                     'type': 'fill',
-                    'source': 'places',
+                    'source': 'hexes',
                     'paint': {
                         'fill-color': '#0080ff', // blue color fill
                         'fill-opacity': 0.5
@@ -60,11 +67,21 @@
                 map.addLayer({
                     'id': 'outline',
                     'type': 'line',
-                    'source': 'places',
+                    'source': 'hexes',
                     'layout': {},
                     'paint': {
                     'line-color': '#000',
                     'line-width': 3
+                    }
+                });
+                map.addLayer({
+                    'id': 'places',
+                    'type': 'circle',
+                    'source': 'places',
+                    'paint': {
+                    'circle-color': 'transparent',
+                    'circle-radius': 6,
+                    
                     }
                 });
 
@@ -85,8 +102,7 @@
 
                 
 
-                    map.on('click', 'places', (e) => {
-                    const popup = new mapboxgl.Popup();
+                map.on('mouseenter', 'places', (e) => {
                     // Change the cursor style as a UI indicator.
                     map.getCanvas().style.cursor = 'pointer';
 
@@ -94,7 +110,7 @@
                     const coordinates = e.features[0].geometry.coordinates.slice();
                     const location = e.features[0].properties.location.split(",");
                     const maxtempfcast = parseFloat(e.features[0].properties.temp_max_forecast);
-                    const mintempfcast = parseFloat(e.features[0].properties.temp_min_forecast);
+                    const mintempfcast = (e.features[0].properties.temp_min_forecast);
                     const maxtempobsrv = parseFloat(e.features[0].properties.temp_max_observation);
                     const mintempobsrv = parseFloat(e.features[0].properties.temp_min_observation);
                     // Ensure that if the map is zoomed out such that multiple
@@ -106,7 +122,7 @@
                     // based on the feature found.
                     popup.setLngLat(coordinates).setHTML(`${location[1]}, ${location[2]}, ${location[3]}
                                                         <br> Max Temp Forcast: ${maxtempfcast.toFixed(2)}
-                                                        <br> Min Temp Forcast: ${mintempfcast.toFixed(2)}
+                                                        <br> Min Temp Forcast: ${mintempfcast}
                                                         <br> Max Temp Observed: ${maxtempobsrv.toFixed(2)}
                                                         <br> Min Temp Observed: ${mintempobsrv.toFixed(2)}`).addTo(map);
                 });
