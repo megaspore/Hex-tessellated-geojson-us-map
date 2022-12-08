@@ -7,132 +7,93 @@
         <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
         <link href="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.css" rel="stylesheet">
         <script src="https://api.mapbox.com/mapbox-gl-js/v2.10.0/mapbox-gl.js"></script>
-        <style>
-        body { margin: 0; padding: 0; }
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+        <link rel="stylesheet" href="{% static 'map/styles.css' %}">
+        
     </head>
     <body>
-        
-        
-        <style>
-            .mapboxgl-popup {
-                max-width: 400px;
-                font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-            }
-        </style>
-        
+        <div id="page">
+            <div class="container">
+                <div class="col1_top_row row" ></div>                       
+                <h1 class="myheader">WHO</h1>
+                <!-- Content here -->
+                <div class="main_row row">
+               
+                    <div id= "col1" class="col">
 
-        <div>
-           <div class='map' id='map' ></div> 
-        </div>
-      
-        
-        <script>
-            
-            mapboxgl.accessToken = 'pk.eyJ1IjoiYmVuZ2llaHVudCIsImEiOiJjbDloNWh2ZncwODVhM3VyeXU1bHdwOTVkIn0.ZmecDzfsknlIZEiUd0ZOiw';
-            const map = new mapboxgl.Map({
-                container: 'map',
-                // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-                style: 'mapbox://styles/mapbox/streets-v11',
-                center: [-94.04, 38.907],
-                zoom: 3
-            });
-            
-            
-            map.on('load', () => {
-                map.addSource('places', {
-                    'type': 'geojson',
-                    'data': "http://127.0.0.1:8000/weathermap/geofile"
-                   
-                
-                });
+                        <h1 class="myheader">PREDICTS</h1>
+                        <h3  class="bottomheader">YOUR WEATHER</h3>
 
-                map.addSource('hexes', {
-                    'type': 'geojson',
-                    'data': "http://127.0.0.1:8000/weathermap/geofile"
-                   
-                
-                });
-                // Add a layer showing the places.
-                map.addLayer({
-                    'id': 'hexes',
-                    'type': 'fill',
-                    'source': 'hexes',
-                    'paint': {
-                        'fill-color': '#0080ff', // blue color fill
-                        'fill-opacity': 0.5
-                    }
-                });
-                map.addLayer({
-                    'id': 'outline',
-                    'type': 'line',
-                    'source': 'hexes',
-                    'layout': {},
-                    'paint': {
-                    'line-color': '#000',
-                    'line-width': 3
-                    }
-                });
-                map.addLayer({
-                    'id': 'places',
-                    'type': 'circle',
-                    'source': 'places',
-                    'paint': {
-                    'circle-color': 'transparent',
-                    'circle-radius': 6,
+                        <div class="col1_top_circle_row row" ></div>
+                       
+                        
+                        <div class="row">
+                            <div class="circle_left_buff"></div>
+                            <div class="circle  rounded-circle" >
+                                <div class="forcastcontainer" width="242" height="121">
+                                    <div id="forcast_accuracy" animation= "skew-x-shake 1.3s;" >WEATHER</div> 
+                                </div>
+                                <div class="forcast_text">FORCAST ACCURACY</div>
+                            </div>  
+                        </div>
+
+                        <div class="row top_station_buff"></div>
+                        <div class="row">
+                            <div class=".col-sm-">
+                                <img class="station_img" src=https://cdn.icon-icons.com/icons2/2460/PNG/512/location_pin_place_map_address_placeholder_icon_149099.png alt="https://cdn.icon-icons.com/icons2/2460/PNG/512/location_pin_place_map_address_placeholder_marker_icon_149108.png">
+                            </div>
+                            <div class="col station_col_wrapper ">
+                                <div class="row station_label">
+                                    STATION:
+                                </div>
+                                <div class="row"></div>
+                                <div id="station"></div>
+                            </div>
+                          
+                        </div>
+                        <div class="row bottom_station_buff"></div>                        
+                    </div>
                     
-                    }
-                });
+                    <div class="col">
+                        <div class=" menu_col">
+                            <div class="row">
+                                <div class="col"></div>
+                                <div class="col">
+                                    <div id="menu"></div> 
+                                </div>
+                            </div>
+                        
+                            <div class="row">     
+                                
+                                    <div id=map ></div>
+                                    <div class='map-overlay' id="legend"></div>
+                                    <div class='map-overlay' id="hexlegend"></div>                         
+                            </div>
+                        </div>
+                    </div>               
+                </div>
 
-            
-
-                //map.on('click', 'places', (e) => {
-                //const popup = new mapboxgl.Popup()
-                //.setLngLat(e.lngLat)
-                //.setHTML(e.features[0].properties.name)
-                //.addTo(map);
-                //});
-
-                // Create a popup, but don't add it to the map yet.
-                const popup = new mapboxgl.Popup({
-                    closeButton: false,
-                    closeOnClick: false
-                });
-
-                
-
-                map.on('mouseenter', 'places', (e) => {
-                    // Change the cursor style as a UI indicator.
-                    map.getCanvas().style.cursor = 'pointer';
-
-                    // Copy coordinates array.
-                    const coordinates = e.features[0].geometry.coordinates.slice();
-                    const location = e.features[0].properties.location.split(",");
-                    const maxtempfcast = parseFloat(e.features[0].properties.temp_max_forecast);
-                    const mintempfcast = (e.features[0].properties.temp_min_forecast);
-                    const maxtempobsrv = parseFloat(e.features[0].properties.temp_max_observation);
-                    const mintempobsrv = parseFloat(e.features[0].properties.temp_min_observation);
-                    // Ensure that if the map is zoomed out such that multiple
-                    // copies of the feature are visible, the popup appears
-                    // over the copy being pointed to.
+                <div class="data_row row">
+                    <div class="table_left_buff"></div>
+                        <div class="col">
+                            <div id="table"></div>
+                        </div>
                     
+                        <div class=" menu_col">
+                            <div class="row">
+                                <div id="menu"></div> 
+                            </div>  
+                        </div> 
+                          
+                </div>
+        </div>    
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
 
-                    // Populate the popup and set its coordinates
-                    // based on the feature found.
-                    popup.setLngLat(coordinates).setHTML(`${location[1]}, ${location[2]}, ${location[3]}
-                                                        <br> Max Temp Forcast: ${maxtempfcast.toFixed(2)}
-                                                        <br> Min Temp Forcast: ${mintempfcast}
-                                                        <br> Max Temp Observed: ${maxtempobsrv.toFixed(2)}
-                                                        <br> Min Temp Observed: ${mintempobsrv.toFixed(2)}`).addTo(map);
-                });
-
-                map.on('mouseleave', 'places', () => {
-                    map.getCanvas().style.cursor = '';
-                    popup.remove();
-                });
-            });
-        </script>
-       
+       {% block script %}
+       <script type="module" src="{% static 'map/bensmap.js' %}"></script>
+       {% endblock %}
     </body>
 </html>

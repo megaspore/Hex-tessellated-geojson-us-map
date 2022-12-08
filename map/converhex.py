@@ -3,6 +3,7 @@ from pyproj import Proj, transform
 import json 
 import math
 
+
 ## pip install python-polylabel 
 # for finding polygon center
 from polylabel import polylabel
@@ -18,6 +19,8 @@ input = "/home/chris/visual/bengie/weather/map/geodata/boundary.geojson"
 ## end hex geojson
 hex = "/home/chris/visual/bengie/weather/map/geodata/testhex.geojson"
 
+## State boundy geojson
+midtest = "/home/chris/visual/bengie/weather/map/geodata/midtest.geojson"
 
 
 ## Load input
@@ -128,6 +131,7 @@ for x in range(xmin, xmax, h):
         if polygon.intersects(hexagon):
             date = ""
             location = ""
+            active = 0
             temp_max_forecast = 0
             temp_min_forecast = 0
             temp_max_observation = 0
@@ -146,7 +150,7 @@ for x in range(xmin, xmax, h):
             # open the data points API geojson file
             with open(api_geo_json) as json_file:
                 geojson = json.load(json_file)
-
+                ## Create new geojson file 
 
                 for feature in geojson["features"]:
                     state = shape(
@@ -159,61 +163,63 @@ for x in range(xmin, xmax, h):
 
                     # check if hexagon is within the state and add properties to that hex
                     if hexagon.intersects(state):
-                        date = (
+                        date = "".join(
                             feature["properties"]["date"],   
                         )
 
-                        location = (
+                        location = "".join(
                             feature["properties"]["location"],
                         )
+                        # if , it bracket formats active: ie [1]
+                        active =  1
 
-                        temp_max_forecast = (
+                        temp_max_forecast = float(str(
                             feature["properties"]["temp_max_forecast"],
-                        )
+                        ).strip("[]"))
 
-                        temp_min_forecast = (
+                        temp_min_forecast = float(str(
                             feature["properties"]["temp_min_forecast"],
-                        )
+                        ).strip("[]"))
 
-                        temp_max_observation = (
+                        temp_max_observation = float(str(
                             feature["properties"]["temp_max_observation"],
-                        )
+                        ).strip("[]")) 
 
-                        temp_min_observation = (
+                        temp_min_observation = float(str(
                             feature["properties"]["temp_min_observation"],
-                        )
+                        ).strip("[]"))
 
-                        bias_temp_max  = (
+                        bias_temp_max  = float(str(
                             feature["properties"]["bias_temp_max"],
-                        )
+                        ).strip("[]")) 
 
-                        bias_temp_min = (
+                        bias_temp_min = float(str(
                             feature["properties"]["bias_temp_min"],
-                        )
+                        ).strip("[]")) 
                         
-                        to_date_rmse_temp_max = (
+                        to_date_rmse_temp_max = float(str(
                             feature["properties"]["to_date_rmse_temp_max"],
-                        )
+                        ).strip("[]")) 
 
-                        to_date_rmse_temp_min = (
+                        to_date_rmse_temp_min = float(str(
                             feature["properties"]["to_date_rmse_temp_min"],
-                        )
+                        ).strip("[]")) 
 
-                        seven_days_rmse_temp_max = (
+                        seven_days_rmse_temp_max = float(str(
                             feature["properties"]["7_days_rmse_temp_max"],
-                        )
+                        ).strip("[]")) 
 
-                        seven_days_rmse_temp_min = (
+                        seven_days_rmse_temp_min = float(str(
                             feature["properties"]["7_days_rmse_temp_min"],
-                        )
+                        ).strip("[]")) 
 
-                        thirty_days_rmse_temp_max  = (
+                        thirty_days_rmse_temp_max  = float(str(
                             feature["properties"]["30_days_rmse_temp_max"],
-                        )
+                        ).strip("[]"))
 
-                        thirty_days_rmse_temp_min = (
+                        thirty_days_rmse_temp_min = float(str(
                             feature["properties"]["30_days_rmse_temp_min"],
-                        )
+                        ).strip("[]")) 
 
 
             # Convert the coordinates back to EPSG 4326
@@ -238,16 +244,17 @@ for x in range(xmin, xmax, h):
 
 
             # create the intersecting feature
-            feature = { 
+            point = { 
                 
                 "type": "Feature",
                 "properties": {
                     "date" : date,
                     "location" : location,
+                    "active" : active,
                     "temp_max_forecast" : temp_max_forecast,
                     "temp_min_forecast" : temp_min_forecast,
                     "temp_max_observation" : temp_max_observation,
-                    "temp_min_observation" : temp_min_observation,
+                    "temp_min_observation":temp_min_observation,
                     "bias_temp_max" : bias_temp_max,
                     "bias_temp_min" : bias_temp_min,
                     "to_date_rmse_temp_max" : to_date_rmse_temp_max,
@@ -261,6 +268,7 @@ for x in range(xmin, xmax, h):
                 "type": "Feature",
                 "geometry": {
                     "type": "Point",
+                    # creating point at center of poly
                     "coordinates": polylabel([
                         [
                             [coords1[0], coords1[1]],
@@ -274,27 +282,49 @@ for x in range(xmin, xmax, h):
                     ]),
                 },
             }
-            poly = {        
+            
+            
+            poly = { 
+
+                "type": "Feature",
+                "properties": {
+                    "date"  :date,
+                    "location" : location,
+                    "active" : active,
+                    "temp_max_forecast" : temp_max_forecast,
+                    "temp_min_forecast" : temp_min_forecast,
+                    "temp_max_observation" : temp_max_observation,
+                    "temp_min_observation" : temp_min_observation,
+                    "bias_temp_max" : bias_temp_max,
+                    "bias_temp_min" : bias_temp_min,
+                    "to_date_rmse_temp_max" : to_date_rmse_temp_max,
+                    "to_date_rmse_temp_min" : to_date_rmse_temp_min,
+                    "7_days_rmse_temp_max" : seven_days_rmse_temp_max,
+                    "7_days_rmse_temp_min" : seven_days_rmse_temp_min,
+                    "30_days_rmse_temp_max" : thirty_days_rmse_temp_max,
+                    "30_days_rmse_temp_min" : thirty_days_rmse_temp_min,
+                },
+
                 "type": "Feature",
                 "geometry": {
                     "type": "Polygon",
                     "coordinates": [
                         [
-                            [coords1[0], coords1[1]],
-                            [coords2[0], coords2[1]],
-                            [coords3[0], coords3[1]],
-                            [coords4[0], coords4[1]],
-                            [coords5[0], coords5[1]],
-                            [coords6[0], coords6[1]],
-                            [coords1[0], coords1[1]],
+                            [coords1[0],coords1[1]],
+                            [coords2[0],coords2[1]],
+                            [coords3[0],coords3[1]],
+                            [coords4[0],coords4[1]],
+                            [coords5[0],coords5[1]],
+                            [coords6[0],coords6[1]],
+                            [coords1[0],coords1[1]],
                         ]
                     ],    
                 },
             }
 
-
+            
             # add the feature to the feature collection
-            feature_collection["features"].append(feature)
+            feature_collection["features"].append(point)
             feature_collection["features"].append(poly)
 
         i = math.floor((ymax - y) / r)
