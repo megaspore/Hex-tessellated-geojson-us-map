@@ -27,7 +27,8 @@ SECRET_KEY = 'django-insecure-266+x=$##$4t#-+p88-i)8igq^8%39*-pj4b@@)a0_me9fe*6u
 DEBUG = False
 
 ALLOWED_HOSTS = ['https://benhuntweatherapptest.herokuapp.com',
-                    '127.0.0.1'
+                    '127.0.0.1',
+                    '.herokuapp.com'
         ]
 
 
@@ -35,6 +36,7 @@ ALLOWED_HOSTS = ['https://benhuntweatherapptest.herokuapp.com',
 
 INSTALLED_APPS = [
     'map',
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,6 +47,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+     # Add whitenoise middleware here
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -84,14 +88,9 @@ DATABASES = {
     }
 }
 
-if "DATABASE_URL" in os.environ:
-    # Configure Django for DATABASE_URL environment variable.
-    DATABASES["default"] = dj_database_url.config(
-        conn_max_age=MAX_CONN_AGE, ssl_require=True)
-
-    # Enable test database if found in CI environment.
-    if "CI" in os.environ:
-        DATABASES["default"]["TEST"] = DATABASES["default"]
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
 
 AUTH_USER_MODEL = 'map.User'
 # Password validation
@@ -130,8 +129,9 @@ USE_L10N = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = os.path.join(BASE_DIR,'static/')
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
