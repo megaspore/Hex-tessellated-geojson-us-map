@@ -20,7 +20,7 @@ map.touchZoomRotate.disable();
 map.doubleClickZoom.disable();
 map.boxZoom.disable();
 
-const mygeojson = "http://127.0.0.1:8000/weathermap/geofile"
+const mygeojson = "http://127.0.0.1:8000/geofile"
 map.on('load', () => {
     document.querySelector('#hexlegend').style.display = 'none';
     

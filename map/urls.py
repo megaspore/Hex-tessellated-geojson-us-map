@@ -3,6 +3,6 @@ from . import views
 
 ## urls to map and geojson
 urlpatterns = [
-    path("weathermap", views.index, name="index"),   
-    path("weathermap/geofile", views.geofile, name="geofile"),
+    path("", views.index, name="index"),   
+    path("geofile", views.geofile, name="geofile"),
 ]
