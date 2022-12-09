@@ -26,6 +26,8 @@ midtest = "/home/chris/visual/bengie/weather/map/geodata/midtest.geojson"
 ## Load input
 input_file=json.load(open(apifile, "r", encoding="utf-8"))
 ## Geojson layout
+## Defining a lat/log size vaiable to adjust the station size to minimize how many hexes its populates
+size=1
 geojs={
     "type": "FeatureCollection",
     "features":[
@@ -36,7 +38,10 @@ geojs={
                 "geometry": {
                 "type":"Polygon",
                 ## Creat polygon from point
-                "coordinates":[[[transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"]+2, d["lat"]),transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"], d["lat"]+2), transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"]-2, d["lat"]), transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"),d["lon"], d["lat"]-2)]]],
+                "coordinates":[[[transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"]+size, d["lat"]),
+                transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"], d["lat"]+size), 
+                transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"), d["lon"]-size, d["lat"]), 
+                transform(Proj(init="epsg:4326"), Proj(init="epsg:3857"),d["lon"], d["lat"]-size)]]],
             },
                 
         ## Populate with inputfile data
@@ -130,6 +135,7 @@ for x in range(xmin, xmax, h):
         # check if the hexagon is within the area of interest
         if polygon.intersects(hexagon):
             date = ""
+            id = ""
             location = ""
             active = 0
             temp_max_forecast = 0
