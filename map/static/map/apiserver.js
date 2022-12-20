@@ -19,15 +19,55 @@ map.keyboard.disable();
 map.touchZoomRotate.disable();
 map.doubleClickZoom.disable();
 map.boxZoom.disable();
-var clickedStateId = null;
-const mygeojson = "http://127.0.0.1:8000/geofile"
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    var myHeaders = new Headers();
+    //api key here
+   
+
+    var requestOptions = {
+    method: 'GET',
+    mode: "no-cors",    
+    redirect: 'follow',
+    headers: {
+        'Authorization': 'Bearer <VrRoZ7e2TJ0LoEmTiqpYclTRISNWwp>',
+        'Content-Type': 'application/x-www-form-urlencoded'
+     },
+    };
+
+    $.ajax({
+        url: 'http://44.200.130.241:5000/geojson/20221219/VC/temperature/VrRoZ7e2TJ0LoEmTiqpYclTRISNWwp',
+        type: 'GET',
+        mode: "no-cors",
+        contentType: 'application/json',
+        headers: {
+           'Authorization': 'Bearer <VrRoZ7e2TJ0LoEmTiqpYclTRISNWwp>'
+        },
+        success: function (result) {
+            console.log(result)
+        },
+        error: function (error) {
+            console.log('error')
+     
+        }
+     });
+    
+   //' .then(response => response.json())
+    //.then(data => {
+        // Log data to the console
+       
+
+const mygeojson = data
 map.on('load', () => {
     document.querySelector('#hexlegend').style.display = 'none';
     
     map.addSource('places', {
         'type': 'geojson',
-        'data': mygeojson,
-        'generateId': true 
+        'data': mygeojson
+       
     
     });
 
@@ -143,7 +183,21 @@ map.on('load', () => {
           });
 
 
-    
+    map.addLayer({
+        'id': 'dot',
+        'type': 'circle',
+        'source': 'places',
+        'layout': {},
+        'paint': {
+        'fill-color': 'white',
+        'fill-opacity': [
+        'case',
+        ['boolean', ['feature-geometry', 'click'], false],
+        1,
+        0.5
+        ]
+        }
+    });
    
 
 
@@ -165,17 +219,14 @@ map.on('load', () => {
         'type': 'circle',
         'source': 'places',
         'paint': {
-        'circle-color': "white",
+        'circle-color': "transparent",
         'circle-radius': 6, 
-        'circle-opacity':[
-            'case',
-            ['boolean', ['feature-state', 'click'], false],
-            0.5,
-            0
-            ]
         }
     });     
 });
+});
+//});
+
 
 
   
@@ -251,7 +302,7 @@ map.on('load', () => {
         const coordinates = e.features[0].geometry.coordinates.slice();
         const location = e.features[0].properties.location.split(",");
         popup.setLngLat(coordinates).setHTML(` <img class="pinimg" src=https://cdn.icon-icons.com/icons2/2460/PNG/512/location_pin_place_map_address_placeholder_icon_149099.png alt="">
-                                                ${(location[0])}${(location[1])}`).addTo(map);
+                                                ${(location[2])[1]}${(location[3])[1]}${(location[4])[1]}`).addTo(map);
 
         map.on('click', 'places', (e) => {
             // Copy coordinates array.
@@ -271,13 +322,13 @@ map.on('load', () => {
 
             // Populate the popup and set its coordinates
             // based on the feature found.
-                    
+          
             
             
-            station.innerHTML = (`${location[0]}, ${location[1]}, ${location[2]}`);                                                                      
-            forcast_accuracy.innerHTML = (`${accuracy}%`);
+            station.setHTML(`${location[2]}, ${location[3]}`);                                                                      
+            forcast_accuracy.setHTML(`${accuracy}%`);
 
-            table.innerHTML = (`<table class="table table-borderless">
+            table.setHTML(`<table class="table table-borderless">
             <thead>
               <tr>
                 <th  scope="col"></th>
@@ -303,26 +354,9 @@ map.on('load', () => {
           </table>
             </thead>
           `)
-        if (e.features.length > 0) {
-            if (clickedStateId) {
-                map.setFeatureState(
-                    { source: 'places', id: clickedStateId },
-                    { click: false }
-                );
-            }
-            clickedStateId = e.features[0].id;
-            map.setFeatureState(
-                { source: 'places', id: clickedStateId },
-                { click: true }
-            );
-        }
-
 
         })
-
-       
     });
-    
 
     map.on('mouseleave', 'places', () => {
         map.getCanvas().style.cursor = '';
