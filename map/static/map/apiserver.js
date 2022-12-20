@@ -26,18 +26,37 @@ document.addEventListener('DOMContentLoaded', function() {
     
     var myHeaders = new Headers();
     //api key here
-    myHeaders.append("apikey", "8oHhBmVNvMmnbsBU6wdewAyzt8yX8CRQ");
+   
 
     var requestOptions = {
     method: 'GET',
+    mode: "no-cors",    
     redirect: 'follow',
-    headers: myHeaders
+    headers: {
+        'Authorization': 'Bearer <VrRoZ7e2TJ0LoEmTiqpYclTRISNWwp>',
+        'Content-Type': 'application/x-www-form-urlencoded'
+     },
     };
-    // Send a GET request to the URL of our api
-    fetch('https://apihere', requestOptions )
-    // Put response into json form
-    .then(response => response.json())
-    .then(data => {
+
+    $.ajax({
+        url: 'http://44.200.130.241:5000/geojson/20221219/VC/temperature/VrRoZ7e2TJ0LoEmTiqpYclTRISNWwp',
+        type: 'GET',
+        mode: "no-cors",
+        contentType: 'application/json',
+        headers: {
+           'Authorization': 'Bearer <VrRoZ7e2TJ0LoEmTiqpYclTRISNWwp>'
+        },
+        success: function (result) {
+            console.log(result)
+        },
+        error: function (error) {
+            console.log('error')
+     
+        }
+     });
+    
+   //' .then(response => response.json())
+    //.then(data => {
         // Log data to the console
        
 
@@ -206,7 +225,7 @@ map.on('load', () => {
     });     
 });
 });
-});
+//});
 
 
 

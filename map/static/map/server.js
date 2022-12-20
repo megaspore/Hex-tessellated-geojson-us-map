@@ -19,15 +19,15 @@ map.keyboard.disable();
 map.touchZoomRotate.disable();
 map.doubleClickZoom.disable();
 map.boxZoom.disable();
-
+var clickedStateId = null;
 const mygeojson = "http://127.0.0.1:8000/geofile"
 map.on('load', () => {
     document.querySelector('#hexlegend').style.display = 'none';
     
     map.addSource('places', {
         'type': 'geojson',
-        'data': mygeojson
-       
+        'data': mygeojson,
+        'generateId': true 
     
     });
 
@@ -143,21 +143,7 @@ map.on('load', () => {
           });
 
 
-    map.addLayer({
-        'id': 'dot',
-        'type': 'circle',
-        'source': 'places',
-        'layout': {},
-        'paint': {
-        'fill-color': 'white',
-        'fill-opacity': [
-        'case',
-        ['boolean', ['feature-geometry', 'click'], false],
-        1,
-        0.5
-        ]
-        }
-    });
+    
    
 
 
@@ -179,8 +165,14 @@ map.on('load', () => {
         'type': 'circle',
         'source': 'places',
         'paint': {
-        'circle-color': "transparent",
+        'circle-color': "white",
         'circle-radius': 6, 
+        'circle-opacity':[
+            'case',
+            ['boolean', ['feature-state', 'click'], false],
+            0.5,
+            0
+            ]
         }
     });     
 });
@@ -279,13 +271,13 @@ map.on('load', () => {
 
             // Populate the popup and set its coordinates
             // based on the feature found.
-          
+                    
             
             
-            station.setHTML(`${location[0]}, ${location[1]}, ${location[2]}`);                                                                      
-            forcast_accuracy.setHTML(`${accuracy}%`);
+            station.innerHTML = (`${location[0]}, ${location[1]}, ${location[2]}`);                                                                      
+            forcast_accuracy.innerHTML = (`${accuracy}%`);
 
-            table.setHTML(`<table class="table table-borderless">
+            table.innerHTML = (`<table class="table table-borderless">
             <thead>
               <tr>
                 <th  scope="col"></th>
@@ -311,9 +303,26 @@ map.on('load', () => {
           </table>
             </thead>
           `)
+        if (e.features.length > 0) {
+            if (clickedStateId) {
+                map.setFeatureState(
+                    { source: 'places', id: clickedStateId },
+                    { click: false }
+                );
+            }
+            clickedStateId = e.features[0].id;
+            map.setFeatureState(
+                { source: 'places', id: clickedStateId },
+                { click: true }
+            );
+        }
+
 
         })
+
+       
     });
+    
 
     map.on('mouseleave', 'places', () => {
         map.getCanvas().style.cursor = '';
