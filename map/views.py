@@ -20,7 +20,7 @@ def geofile(request):
     ## Output variable, what populates the map currently
     output = "/home/chris/visual/bengie/weather/map/geodata/test.geojson"
     ## Hex variable is the output ran through pyEAC tesillation, currently not working dynamicly
-    hex = "/home/chris/visual/bengie/weather/map/geodata/testhex.geojson"
+    hex = "/home/chris/visual/bengie/weather/map/geodata/NWS_temperature_20221218.geojson"
     
     ## if output already exists populate with output
     if os.path.exists(output) == True: 

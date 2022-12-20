@@ -20,7 +20,28 @@ map.touchZoomRotate.disable();
 map.doubleClickZoom.disable();
 map.boxZoom.disable();
 
-const mygeojson = "http://127.0.0.1:8000/geofile"
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    
+    var myHeaders = new Headers();
+    //api key here
+    myHeaders.append("apikey", "8oHhBmVNvMmnbsBU6wdewAyzt8yX8CRQ");
+
+    var requestOptions = {
+    method: 'GET',
+    redirect: 'follow',
+    headers: myHeaders
+    };
+    // Send a GET request to the URL of our api
+    fetch('https://apihere', requestOptions )
+    // Put response into json form
+    .then(response => response.json())
+    .then(data => {
+        // Log data to the console
+       
+
+const mygeojson = data
 map.on('load', () => {
     document.querySelector('#hexlegend').style.display = 'none';
     
@@ -184,6 +205,9 @@ map.on('load', () => {
         }
     });     
 });
+});
+});
+
 
 
   
@@ -259,7 +283,7 @@ map.on('load', () => {
         const coordinates = e.features[0].geometry.coordinates.slice();
         const location = e.features[0].properties.location.split(",");
         popup.setLngLat(coordinates).setHTML(` <img class="pinimg" src=https://cdn.icon-icons.com/icons2/2460/PNG/512/location_pin_place_map_address_placeholder_icon_149099.png alt="">
-                                                ${(location[0])}${(location[1])}`).addTo(map);
+                                                ${(location[2])[1]}${(location[3])[1]}${(location[4])[1]}`).addTo(map);
 
         map.on('click', 'places', (e) => {
             // Copy coordinates array.
@@ -282,7 +306,7 @@ map.on('load', () => {
           
             
             
-            station.setHTML(`${location[0]}, ${location[1]}, ${location[2]}`);                                                                      
+            station.setHTML(`${location[2]}, ${location[3]}`);                                                                      
             forcast_accuracy.setHTML(`${accuracy}%`);
 
             table.setHTML(`<table class="table table-borderless">
