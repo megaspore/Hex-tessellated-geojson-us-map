@@ -14,9 +14,9 @@ from pyproj import Proj, transform
 import json
 import requests
 
-password = 'VrRoZ7e2TJ0LoEmTiqpYclTRISNWwp'
+password = os.environ['MYAPIKEY']
 
-url = 'http://44.200.130.241:5000/geojson/20221218/NWS/temperature/' + str(password)
+url = 'http://44.200.130.241:5000/geojson/20230101/NWS/temperature/' + str(password)
 headers = {"Authorization": f"Bearer {password}"}
 
 ## Redirects you to the url with the map
@@ -24,7 +24,7 @@ def index(request):
     return render(request, "map/weathermap.html" )
 
 def geofile(request):
-    #hexfile = "/home/isagonza/bengie/map/geodata/testhex.geojson"
+    #hexfile = "/home/isagonza/keeptrying.geojson"
     #j = json.load(open(hexfile, 'r', encoding = 'utf-8'))
     r = requests.get(url, headers=headers)
     j = json.loads(r.text)
