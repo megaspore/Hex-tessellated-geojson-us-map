@@ -1,6 +1,6 @@
-# Hex tesilate geojson from a series of Geographic coordinates in json format
+# Hex Tessellated Geojson From a Series of Geographic Coordinates in Json Format
 
-![Hex tesilated geojson](weather.jpg)
+![Hex tessellated geojson](weather.jpg)
 The django frame work:
 Views.py = Backend pyhthon script for the webpage
   1. Index : script for rendering the map url
