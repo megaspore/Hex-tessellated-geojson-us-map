@@ -1,40 +1,49 @@
-# Hex Tessellated Geojson From a Series of Geographic Coordinates in Json Format
+# Hex Tessellated GeoJSON From a Series of Geographic Coordinates in JSON Format
 
 ![Hex tessellated geojson](weather.jpg)
-The django frame work:
-Views.py = Backend pyhthon script for the webpage
-  1. Index : script for rendering the map url
-  2. Geofile : script for converting json to jeojson and hosing it in weathermap/geofile url path
 
-urls.py= your two urls
+### The Django Framework
+**Views.py**: Backend Python script for the webpage.  
+1. **Index**: Script for rendering the map URL.  
+2. **Geofile**: Script for converting JSON to GeoJSON and hosting it in the `weathermap/geofile` URL path.
+
+**urls.py**: Contains the two URL paths.
+
 
 urlpatterns = [
-    path("weathermap", views.index, name="index"),   
+    path("weathermap", views.index, name="index"),
     path("weathermap/geofile", views.geofile, name="geofile"),
 ]
 
-convertpoint.py = converts json file to a geojson file with a single point
-convertsquare.py= converts json file to geojason as a square
-converhex.py= is the script in progress to convert to a tessilated hex map right now im generating it manually via pyEAC
+Conversion Scripts
 
-Currently views.py converts to squares. if you delete geodata/test.geojson and loccally load webpage a new test file will generate and host.
-If you change the output in views def geofile to the hex path bellow you can see the hex placement of the data when the map loads
+    convertpoint.py: Converts a JSON file to a GeoJSON file with a single point.
+    convertsquare.py: Converts a JSON file to GeoJSON as a square.
+    converhex.py: Script in progress to convert to a tessellated hex map. Currently, hex maps are generated manually using pyEAC.
 
+Current Implementation
 
-geodata.testhex.geoson has the correct hex tessilation in the geojson file. if you want to addapt your backend to contain that data for each location it would probably be ideal rather that generating a new tessilation everytime a user looks at the page. this is the format we should just have the data in. I was trying to figure out how to just parse the cordinences off and attach them to your current backend json as a reference but I his a brick wall, maybe just do in manually.
+The views.py script currently converts to squares:
 
-bengie/weather/map/templates/map/weathermap.html
-has the Java script for the current map. currently its buggy, the popups arent working with the new polygon generations, it works with the point placement of the data though, which is not currently set up in the environmt via views.py
+    If you delete geodata/test.geojson and load the webpage locally, a new test file will generate and host.
+    To view hex placement, change the output in views.py under the def geofile function to the hex path below. This will render the hex tessellation of the data when the map loads.
 
-bengie/weather/map/templates/map/geotest.html
-is blank, this is where the json file populates
+geodata.testhex.geojson contains the correct hex tessellation in the GeoJSON format. Ideally, the backend data should store this information for each location instead of regenerating tessellation every time the user loads the page.
 
-bengie/weather/map/templates/map/layout.html
-Is a boiler plait layout for the page
+I attempted to parse the coordinates and attach them to the backend JSON as a reference but encountered challenges. For now, manual adjustments might be more practical.
+File Descriptions
 
-Models and forms.py can help us manipulate the data eventually for the user. Ideally the backend data you have would just be a model on here
+    bengie/weather/map/templates/map/weathermap.html: Contains the JavaScript for the current map.
+        Currently, it's buggy—popups do not work with the new polygon generations but function with point placements. This is not yet implemented in the environment via views.py.
 
-Django references if you want to set up:
+    bengie/weather/map/templates/map/geotest.html: Blank template where the JSON file populates.
+
+    bengie/weather/map/templates/map/layout.html: Boilerplate layout for the page.
+
+Future Work
+
+Models and forms.py: These can be utilized to manipulate data for user interaction. Ideally, the backend data would eventually be set up as a model in Django.
+Django References
 
 https://cs50.harvard.edu/web/2020/notes/3/
 https://youtu.be/w8q0C-C1js4?list=TLPQMjUxMDIwMjK8z4urEoom4w
