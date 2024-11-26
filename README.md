@@ -1,4 +1,4 @@
-# bengie
+# Hex tesilate geojson from a series of Geographic coordinate in json format
 The django frame work:
 Views.py = Backend pyhthon script for the webpage
   1. Index : script for rendering the map url
